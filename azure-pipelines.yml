@@ -1,0 +1,66 @@
+trigger:
+  branches:
+    include:
+      - main
+      - feature/*
+  paths:
+    exclude:
+      - 'README.md'
+      - 'docs/**'
+
+pr:
+  branches:
+    include:
+      - main
+  paths:
+    exclude:
+      - 'README.md'
+      - 'docs/**'
+
+variables:
+  buildConfiguration: 'Release'
+  dotNetVersion: '9.0.x' # Updated to use .NET 9.0.x
+  coverletVersion: '3.1.0' # Updated to a more recent version of Coverlet
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+- task: UseDotNet@2
+  displayName: 'Install .NET SDK'
+  inputs:
+    version: $(dotNetVersion)
+    performMultiLevelLookup: true
+
+- task: DotNetCoreCLI@2
+  displayName: 'Restore dependencies'
+  inputs:
+    command: 'restore'
+    projects: '**/*.csproj' # Simplified to restore all projects
+    feedsToUse: 'select'
+    includeNuGetOrg: true
+    restoreDirectory: '$(Build.SourcesDirectory)/packages'
+
+- task: DotNetCoreCLI@2
+  displayName: 'Build solution'
+  inputs:
+    command: 'build'
+    projects: '**/*.csproj'
+    arguments: '--configuration $(buildConfiguration) --no-restore'
+    includeNuGetOrg: true
+
+- task: DotNetCoreCLI@2
+  displayName: 'Run unit tests'
+  inputs:
+    command: 'test'
+    projects: '**/*Tests.csproj' # More flexible test project detection
+    arguments: '--configuration $(buildConfiguration) --no-build --collect "XPlat Code Coverage" --settings coverlet.runsettings'
+    publishTestResults: true
+
+- task: PublishCodeCoverageResults@1
+  displayName: 'Publish code coverage'
+  inputs:
+    codeCoverageTool: 'Cobertura'
+    summaryFileLocation: '$(Agent.TempDirectory)/**/coverage.cobertura.xml'
+    reportDirectory: '$(Agent.TempDirectory)/**/'
+    failIfCoverageEmpty: true
