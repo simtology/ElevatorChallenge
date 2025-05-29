@@ -1,15 +1,48 @@
 ﻿using ElevatorChallenge.Core;
 using ElevatorChallenge.Core.Interfaces;
 using AutoFixture;
-using System;
 using Xunit;
 
 namespace ElevatorChallenge.Tests
 {
+    /// <summary>
+    /// Unit tests for the Elevator class.
+    /// This class uses AutoFixture to generate test data and validate the functionality of the Elevator class.
+    /// It includes tests for the constructor, moving to floors, adding/removing passengers, and getting elevator status.
+    /// The tests ensure that the Elevator class behaves correctly under various conditions and handles edge cases appropriately.
+    /// Each test method is designed to validate a specific aspect of the Elevator class, such as ensuring that the constructor sets properties correctly,
+    /// moving to valid and invalid floors, adding and removing passengers, and retrieving the elevator's status.
+    /// The tests also check for exceptions when invalid parameters are provided, such as non-positive capacity or max floors,
+    /// ensuring that the Elevator class adheres to its contract and behaves as expected.
+    /// This class serves as a comprehensive suite of tests for the Elevator class, ensuring its reliability and correctness.
+    /// </summary>
+    /// <remarks>
+    /// This class is a unit test suite for the Elevator class.
+    /// It uses the AutoFixture library to generate test data and validate the functionality of the Elevator class.
+    /// The tests cover various scenarios, including valid and invalid parameters, moving to different floors,
+    /// adding and removing passengers, and checking the elevator's status.
+    /// Each test method is designed to ensure that the Elevator class behaves correctly and handles edge cases appropriately.
+    /// The tests also check for exceptions when invalid parameters are provided, such as non-positive capacity or max floors,
+    /// ensuring that the Elevator class adheres to its contract and behaves as expected.
+    /// This class serves as a comprehensive suite of tests for the Elevator class, ensuring its reliability and correctness.
+    /// </remarks>
     public class ElevatorTests
     {
+        /// <summary>
+        /// Fixture for generating test data.
+        /// This fixture is used to create instances of the Elevator class with valid parameters for testing.
+        /// It uses AutoFixture to generate random values for the elevator's ID, capacity, and maximum number of floors.
+        /// This fixture can be used in other test methods to create instances of the Elevator class with the desired parameters.
+        /// </summary>
         private readonly Fixture _fixture;
 
+        /// <summary>
+        /// Initializes a new instance of the ElevatorTests class.
+        /// This constructor sets up the fixture for generating test data.
+        /// It customizes the fixture to create an Elevator instance with valid parameters,
+        /// ensuring that the ID is an integer, capacity is a positive integer, and maxFloors is a positive integer.
+        /// The fixture can be used in the test methods to create instances of the Elevator class with the desired parameters.
+        /// </summary>       
         public ElevatorTests()
         {
             _fixture = new Fixture();
@@ -17,6 +50,18 @@ namespace ElevatorChallenge.Tests
             _fixture.Customize<IElevator>(c => c.FromFactory(() => new Elevator(_fixture.Create<int>(), Math.Abs(_fixture.Create<int>()) + 1, Math.Abs(_fixture.Create<int>()) + 1)));
         }
 
+        /// <summary>
+        /// Tests the constructor of the Elevator class with valid parameters.
+        /// This test verifies that the constructor sets the properties correctly,
+        /// including the ID, elevator type, current floor, direction, moving status, and passenger count.
+        /// </summary>
+        /// <remarks>
+        /// This test ensures that the Elevator class can be instantiated with valid parameters,
+        /// and that the properties are set correctly. It checks that the ID is assigned,
+        /// the elevator type is set to "Elevator", the current floor is initialized to 1,
+        /// the direction is set to "None", the moving status is false, and the passenger count is initialized to 0.
+        /// This test is essential to ensure that the Elevator class behaves correctly when created with valid parameters.
+        /// </remarks>
         [Fact]
         public void Constructor_ValidParameters_SetsProperties()
         {
@@ -40,6 +85,15 @@ namespace ElevatorChallenge.Tests
             Assert.Equal(0, status.PassengerCount);
         }
 
+        /// <summary>
+        /// Tests the constructor of the Elevator class with non-positive capacity.
+        /// This test verifies that an ArgumentException is thrown when the capacity is not a positive integer.
+        /// </summary>
+        /// <remarks>
+        /// This test ensures that the Elevator class enforces the contract that the capacity must be a positive integer.
+        /// It checks that when a non-positive capacity is provided, an ArgumentException is thrown with the appropriate message.
+        /// This is essential to ensure that the Elevator class behaves correctly and does not allow invalid parameters.
+        /// </remarks>
         [Fact]
         public void Constructor_NonPositiveCapacity_ThrowsArgumentException()
         {
@@ -53,6 +107,15 @@ namespace ElevatorChallenge.Tests
             Assert.Equal("Capacity must be a positive integer.", exception.Message);
         }
 
+        /// <summary>
+        /// Tests the constructor of the Elevator class with non-positive maximum floors.
+        /// This test verifies that an ArgumentException is thrown when the maximum number of floors is not a positive integer.
+        /// </summary>
+        /// <remarks>
+        /// This test ensures that the Elevator class enforces the contract that the maximum number of floors must be a positive integer.
+        /// It checks that when a non-positive maximum number of floors is provided, an ArgumentException is thrown with the appropriate message.
+        /// This is essential to ensure that the Elevator class behaves correctly and does not allow invalid parameters.
+        /// </remarks>
         [Fact]
         public void Constructor_NonPositiveMaxFloors_ThrowsArgumentException()
         {
@@ -66,6 +129,16 @@ namespace ElevatorChallenge.Tests
             Assert.Equal("Max floors must be a positive integer.", exception.Message);
         }
 
+        /// <summary>
+        /// Tests moving the elevator to a valid floor above the current floor.
+        /// This test verifies that the elevator correctly updates its current floor and direction when moving to a higher floor.
+        /// </summary>
+        /// <remarks>
+        /// This test ensures that the Elevator class can move to a valid floor above the current floor.
+        /// It checks that when a valid target floor is provided, the elevator updates its current floor to the target floor,
+        /// sets the direction to "Up", and marks itself as moving.
+        /// This is essential to ensure that the Elevator class behaves correctly when moving to a higher floor.
+        /// </remarks>
         [Fact]
         public void MoveToFloor_ValidFloorAboveCurrent_SetsFloorAndDirectionUp()
         {
@@ -84,6 +157,16 @@ namespace ElevatorChallenge.Tests
             Assert.True(status.IsMoving); // IsMoving should be true after moving to a new floor                     
         }
 
+        /// <summary>
+        /// Tests moving the elevator to a valid floor below the current floor.
+        /// This test verifies that the elevator correctly updates its current floor and direction when moving to a lower floor.
+        /// </summary>
+        /// <remarks>
+        /// This test ensures that the Elevator class can move to a valid floor below the current floor.
+        /// It checks that when a valid target floor is provided, the elevator updates its current floor to the target floor,
+        /// sets the direction to "Down", and marks itself as moving.
+        /// This is essential to ensure that the Elevator class behaves correctly when moving to a lower floor.
+        /// </remarks>
         [Fact]
         public void MoveToFloor_ValidFloorBelowCurrent_SetsFloorAndDirectionDown()
         {
@@ -103,6 +186,20 @@ namespace ElevatorChallenge.Tests
             Assert.True(status.IsMoving); // IsMoving should be true after moving to a new floor
         }
 
+        /// <summary>
+        /// Tests moving the elevator to the same floor it is currently on.
+        /// This test verifies that the elevator correctly sets its direction to "None" and does not change its current floor.
+        /// This test ensures that the Elevator class behaves correctly when moving to the same floor it is already on.
+        /// It checks that when the target floor is the same as the current floor, the elevator does not change its current floor,
+        /// sets the direction to "None", and marks itself as not moving.
+        /// This is essential to ensure that the Elevator class behaves correctly when no movement is required.
+        /// </summary>
+        /// <remarks>
+        /// This test ensures that the Elevator class behaves correctly when moving to the same floor it is already on.
+        /// It checks that when the target floor is the same as the current floor, the elevator does not change its current floor,
+        /// sets the direction to "None", and marks itself as not moving.
+        /// This is essential to ensure that the Elevator class behaves correctly when no movement is required.
+        /// </remarks>
         [Fact]
         public void MoveToFloor_SameFloor_SetsDirectionNone()
         {
@@ -122,6 +219,15 @@ namespace ElevatorChallenge.Tests
             Assert.False(status.IsMoving); // IsMoving should be false when not moving
         }
 
+        /// <summary>
+        /// Tests moving the elevator to a floor below one, which is invalid.
+        /// This test verifies that an ArgumentOutOfRangeException is thrown when trying to move to a floor below one.
+        /// </summary>
+        /// <remarks>
+        /// This test ensures that the Elevator class enforces the contract that the floor number must be at least one.
+        /// It checks that when an invalid floor (below one) is provided, an ArgumentOutOfRangeException is thrown with the appropriate message.
+        /// This is essential to ensure that the Elevator class behaves correctly and does not allow invalid parameters.
+        /// </remarks>
         [Fact]
         public void MoveToFloor_FloorBelowOne_ThrowsArgumentException()
         {
@@ -134,6 +240,15 @@ namespace ElevatorChallenge.Tests
             Assert.Equal("Floor must be between 1 and", exception.Message);
         }
 
+        /// <summary>
+        /// Tests moving the elevator to a floor above the maximum number of floors.
+        /// This test verifies that an ArgumentException is thrown when trying to move to a floor above the maximum number of floors.
+        /// </summary>
+        /// <remarks>
+        /// This test ensures that the Elevator class enforces the contract that the floor number must be within the range of valid floors.
+        /// It checks that when an invalid floor (above the maximum number of floors) is provided, an ArgumentException is thrown with the appropriate message.
+        /// This is essential to ensure that the Elevator class behaves correctly and does not allow invalid parameters.
+        /// </remarks>
         [Fact]
         public void MoveToFloor_FloorAboveMaxFloors_ThrowsArgumentException()
         {
@@ -147,6 +262,15 @@ namespace ElevatorChallenge.Tests
             Assert.Contains($"Floor must be between 1 and {maxFloors}", exception.Message);
         }
 
+        /// <summary>
+        /// Tests adding passengers to the elevator with a valid count that does not exceed capacity.
+        /// This test verifies that the passenger count increases correctly when adding a valid number of passengers.
+        /// </summary>
+        /// <remarks>
+        /// This test ensures that the Elevator class can add passengers without exceeding its capacity.
+        /// It checks that when a valid number of passengers is added, the passenger count increases correctly.
+        /// This is essential to ensure that the Elevator class behaves correctly when adding passengers and does not exceed its capacity.
+        /// </remarks>
         [Fact]
         public void AddPassengers_ValidCountWithCapacity_IncreasesPassengerCount()
         {
@@ -163,6 +287,15 @@ namespace ElevatorChallenge.Tests
             Assert.Equal(passengersToAdd, status.PassengerCount); // Passenger count should increase by the number of passengers added
         }
 
+        /// <summary>
+        /// Tests adding passengers to the elevator exceeding its capacity.
+        /// This test verifies that an InvalidOperationException is thrown when trying to add passengers that exceed the elevator's capacity.
+        /// </summary>
+        /// <remarks>
+        /// This test ensures that the Elevator class enforces the contract that the number of passengers must not exceed its capacity.
+        /// It checks that when an attempt is made to add passengers that exceed the capacity, an InvalidOperationException is thrown with the appropriate message.
+        /// This is essential to ensure that the Elevator class behaves correctly and does not allow exceeding its capacity.
+        /// </remarks>
         [Fact]
         public void AddPassengers_ExceedingPassengerCapacity_ThrowsInvalidOperationException()
         {
@@ -176,6 +309,15 @@ namespace ElevatorChallenge.Tests
             Assert.Equal("Cannot add passengers: exceeds capacity.", exception.Message);
         }
 
+        /// <summary>
+        /// Tests adding passengers to the elevator with a negative count.
+        /// This test verifies that an ArgumentOutOfRangeException is thrown when trying to add a negative number of passengers.
+        /// </summary>
+        /// <remarks>
+        /// This test ensures that the Elevator class enforces the contract that the number of passengers must be a positive integer.
+        /// It checks that when a negative count is provided, an ArgumentOutOfRangeException is thrown with the appropriate message.
+        /// This is essential to ensure that the Elevator class behaves correctly and does not allow invalid parameters.
+        /// </remarks>
         [Fact]
         public void AddPassengers_NegativeCount_ThrowsArgumentOutOfRangeException()
         {
@@ -188,6 +330,15 @@ namespace ElevatorChallenge.Tests
             Assert.Equal("Passenger count must be positive.", exception.Message);
         }
 
+        /// <summary>
+        /// Tests removing passengers from the elevator with a valid count that does not exceed current passengers.
+        /// This test verifies that the number of passengers in the elevator decreases correctly when removing passengers.
+        /// </summary>
+        /// <remarks>
+        /// This test ensures that the Elevator class can remove passengers without going below zero.
+        /// It checks that when a valid number of passengers is removed, the passenger count decreases correctly.
+        /// This is essential to ensure that the Elevator class behaves correctly when removing passengers and does not allow negative passenger counts.
+        /// </remarks>
         [Fact]
         public void RemovePassengers_ValidPassengerCountWithinCurrent_DecreasesPassengerCount()
         {
@@ -208,6 +359,15 @@ namespace ElevatorChallenge.Tests
             Assert.Equal(initialPassengers - passengersToRemove, status.PassengerCount); // Passenger count should decrease by the number of passengers removed
         }
 
+        /// <summary>
+        /// Tests removing passengers from the elevator with more than current passengers.
+        /// This test verifies that an InvalidOperationException is thrown when trying to remove more passengers than currently in the elevator.
+        /// </summary>
+        /// <remarks>
+        /// This test ensures that the Elevator class enforces the contract that the number of passengers cannot go below zero.
+        /// It checks that when an attempt is made to remove more passengers than currently in the elevator, an InvalidOperationException is thrown with the appropriate message.
+        /// This is essential to ensure that the Elevator class behaves correctly and does not allow negative passenger counts.
+        /// </remarks>
         [Fact]
         public void RemovePassengers_MoreThanCurrentPassengers_ThrowsInvalidOperationException()
         {
@@ -224,6 +384,15 @@ namespace ElevatorChallenge.Tests
             Assert.Equal("Cannot remove passengers: not enough passengers.", exception.Message);
         }
 
+        /// <summary>
+        /// Tests removing passengers from the elevator with a negative count.
+        /// This test verifies that an ArgumentOutOfRangeException is thrown when trying to remove a negative number of passengers.
+        /// </summary>
+        /// <remarks>
+        /// This test ensures that the Elevator class enforces the contract that the number of passengers must be a positive integer.
+        /// It checks that when a negative count is provided, an ArgumentOutOfRangeException is thrown with the appropriate message.
+        /// This is essential to ensure that the Elevator class behaves correctly and does not allow invalid parameters.
+        /// </remarks>
         [Fact]
         public void RemovePassengers_NegativeCount_ThrowsArgumentOutOfRangeException()
         {
@@ -236,11 +405,19 @@ namespace ElevatorChallenge.Tests
             Assert.Equal("Passenger count must be positive.", exception.Message);
         }
 
+        /// <summary>
+        /// Tests getting the status of the elevator after multiple operations.
+        /// This test verifies that the status reflects the current floor, direction, moving status, and passenger count correctly after moving and adding passengers.
+        /// </summary>
+        /// <remarks>
+        /// This test ensures that the Elevator class correctly updates its status after performing multiple operations.
+        /// It checks that after moving to a target floor and adding passengers,the status reflects the current floor, direction, moving status, and passenger count correctly.
+        /// This is essential to ensure that the Elevator class behaves correctly and provides accurate status information.
+        /// </remarks>
         [Fact]
         public void GetStatus_AfterMultipleOperations_ReturnsCorrectStatus()
         {
-            // Arrange
-            var elevator = _fixture.Create<Elevator>();
+            // Arrange           
             var capacity = _fixture.Create<int>() % 100 + 1; // Ensure capacity is positive
             var maxFloors = _fixture.Create<int>() % 50 + 1; // Ensure maxFloors is positive
             var elevatorWithKnownParameters = new Elevator(_fixture.Create<int>(), capacity, maxFloors); // Create elevator with known parameters
@@ -260,6 +437,15 @@ namespace ElevatorChallenge.Tests
             Assert.Equal(passengersToAdd, status.PassengerCount); // Passenger count should match the number of passengers added
         }
 
+        /// <summary>
+        /// Tests getting the status of the elevator in its initial state.
+        /// This test verifies that the status reflects the default values for current floor, direction, moving status, and passenger count.
+        /// </summary>
+        /// <remarks>
+        /// This test ensures that the Elevator class initializes its status correctly when first created.
+        /// It checks that the initial status reflects the default values: the current floor is 1, direction is "None", moving status is false, and passenger count is 0.
+        /// This is essential to ensure that the Elevator class behaves correctly when first instantiated.
+        /// </remarks>
         [Fact]
         public void GetStatus_InitialState_ReturnsDefaultStatus()
         {
@@ -274,6 +460,6 @@ namespace ElevatorChallenge.Tests
             Assert.Equal("None", status.Direction); // Default direction should be "None"
             Assert.False(status.IsMoving); // Default IsMoving should be false
             Assert.Equal(0, status.PassengerCount); // Default passenger count should be 0
-        }   
+        }
     }
 }
