@@ -43,5 +43,32 @@ namespace ElevatorChallenge.Core
         }
 
         // Additional properties and methods can be added here as needed.
+        public void MoveToFloor(int floor)
+        {
+            // Placeholder implementation for moving to a specific floor.
+            // This method can be expanded in future tasks to include actual logic.
+            throw new NotImplementedException();
+        }
+
+        public void AddPassengers(int count)
+        {
+            // Placeholder implementation for adding passengers.
+            // This method can be expanded in future tasks to include actual logic.
+            throw new NotImplementedException();
+        }
+
+        public void RemovePassengers(int count)
+        {
+            // Placeholder implementation for removing passengers.
+            // This method can be expanded in future tasks to include actual logic.
+            throw new NotImplementedException();
+        }
+
+        public ElevatorStatus GetStatus()
+        {
+            // Placeholder implementation for getting the elevator status.
+            // This method can be expanded in future tasks to include actual logic.
+            throw new NotImplementedException();
+        }
     }
 }
