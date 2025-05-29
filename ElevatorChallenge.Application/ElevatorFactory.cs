@@ -26,7 +26,11 @@ namespace ElevatorChallenge.Application
         /// </remarks>      
         public IElevator CreateElevator(string type, int id, int capacity, int maxFloors)
         {
-            return new PlaceholderElevator(id, type);
+            return type switch
+            {
+                nameof(Elevator) => new Elevator(id,capacity,maxFloors),
+                _ => throw new ArgumentException($"Unknown elevator type: {type}", nameof(type))
+            };
         }
     }
 }

@@ -13,7 +13,7 @@ namespace ElevatorChallenge.Core
         /// <summary>
         /// Initializes a new instance of the <see cref="Elevator"/> class.
         /// This constructor sets the ID, capacity, and maximum number of floors for the elevator.
-        /// </summary>
+        /// </summary>       
         /// <param name="id">The unique identifier for the elevator.</param>
         /// <param name="capacity">The maximum number of passengers the elevator can carry.</param>
         /// <param name="maxFloors">The maximum number of floors the elevator can service.</param>
