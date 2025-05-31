@@ -17,6 +17,8 @@ namespace ElevatorChallenge.Infrastructure
     {
         public static void Main(string[] args)
         {
+            Console.WriteLine("Elevator Simulation Starting...");
+
             // Configure Dependency Injection
             var services = new ServiceCollection();
 
@@ -39,17 +41,78 @@ namespace ElevatorChallenge.Infrastructure
             var building = serviceProvider.GetRequiredService<IBuilding>();
             var elevators = serviceProvider.GetServices<IElevator>();
 
+            // Resolve controller
+            var controller = serviceProvider.GetRequiredService<IElevatorController>();
+
+            // Add elevators to the building
             foreach (var elevator in elevators)
             {
                 building.AddElevator(elevator);
             }
-
-            // Resolve controller
-            var controller = serviceProvider.GetRequiredService<IElevatorController>();
-
-            // Placeholder main loop (to be expanded in future tasks)
-            Console.WriteLine("Elevator Simulation Starting...");
+            
             Console.WriteLine("Elevator Simulation Initialized with DI");
+
+            // Main loop for user interaction
+            while (true)
+            {
+                try
+                {
+                    Console.WriteLine("\nElevator Simulation");
+                    Console.WriteLine("1. Request Elevator");
+                    Console.WriteLine("2. View Elevator Status");
+                    Console.WriteLine("3. Exit");
+                    Console.Write("Select an option: ");
+
+                    var choice = Console.ReadLine();
+                    if (choice == "3") break;
+
+                    switch (choice)
+                    {
+                        case "1":
+                            {
+                                Console.Write("Enter floor (1-10): ");
+                                if (!int.TryParse(Console.ReadLine(), out var floor))
+                                {
+                                    throw new ArgumentException("Invalid floor.");
+                                }
+
+                                Console.Write("Enter passenger count: ");
+                                if (!int.TryParse(Console.ReadLine(), out var passengers))
+                                {
+                                    throw new ArgumentException("Invalid passenger count.");
+                                }
+
+                                Console.Write("Enter direction (Up/Down): ");
+
+                                var direction = Console.ReadLine();
+                                controller.RequestElevator(floor, passengers, direction);
+
+                                Console.WriteLine("Elevator dispatched.");
+                            }
+                            break;
+
+                        case "2":
+                            {
+                                foreach (var elevator in building.GetElevators())
+                                {
+                                    var status = controller.GetElevatorStatus(elevator.Id);
+                                    Console.WriteLine($"Elevator {elevator.Id} ({elevator.ElevatorType}): Floor {status.CurrentFloor}, {status.Direction}, {(status.IsMoving ? "Moving" : "Idle")}, Passengers: {status.PassengerCount}");
+                                }
+                            }
+                            break;
+                        default:
+                            {
+                                Console.WriteLine("Invalid option.");
+                            }
+                            break;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error: {ex.Message}");
+                }
+            }
+            
             Console.WriteLine("Press any key to exit...");
             Console.ReadKey();
         }
