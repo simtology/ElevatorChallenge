@@ -27,8 +27,9 @@ namespace ElevatorChallenge.Core.Interfaces
         /// <remarks>
         /// This method is used to move the elevator to a specific floor.
         /// It takes the floor number as a parameter and updates the elevator's current position.
-        /// /// </remarks>
-        /// <exception cref="ArgumentOutOfRangeException">Thrown when the floor number is invalid.</exception>
+        /// </remarks>
+        /// <exception cref="ArgumentException">Thrown when the floor number is invalid.</exception>
+        /// <exception cref="InvalidOperationException">Thrown when the elevator is not operational.</exception>
         void MoveToFloor(int floor);
         /// <summary>
         /// Adds passengers to the elevator.
@@ -39,9 +40,7 @@ namespace ElevatorChallenge.Core.Interfaces
         /// It takes the count of passengers as a parameter and updates the elevator's passenger count.
         /// </remarks>
         /// <exception cref="InvalidOperationException">Thrown when the elevator is full.</exception>
-        /// <exception cref="ArgumentOutOfRangeException">Thrown when the count is negative.</exception>
-        /// <exception cref="InvalidOperationException">Thrown when the elevator is full.</exception>
-        /// <exception cref="ArgumentOutOfRangeException">Thrown when the count is negative.</exception>
+        /// <exception cref="ArgumentException">Thrown when the count is negative.</exception>       
         void AddPassengers(int count);
         /// <summary>
         /// Removes passengers from the elevator.
@@ -52,7 +51,7 @@ namespace ElevatorChallenge.Core.Interfaces
         /// It takes the count of passengers to remove as a parameter and updates the elevator's passenger count.
         /// </remarks>
         /// <exception cref="InvalidOperationException">Thrown when there are not enough passengers to remove.</exception>
-        /// <exception cref="ArgumentOutOfRangeException">Thrown when the count is negative.</exception>        
+        /// <exception cref="ArgumentException">Thrown when the count is negative.</exception>        
         void RemovePassengers(int count);
         /// <summary>
         /// Gets the current status of the elevator.

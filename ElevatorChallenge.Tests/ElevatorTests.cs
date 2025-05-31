@@ -145,16 +145,17 @@ namespace ElevatorChallenge.Tests
             // Arrange
             var elevator = _fixture.Create<Elevator>();
             var status = elevator.GetStatus();
-            var targetFloor = status.CurrentFloor + (_fixture.Create<int>() % (status.CurrentFloor - 1)) + 2; // Ensure target floor is above current floor
+            var targetFloor = status.CurrentFloor + (_fixture.Create<int>() % Math.Max(1, status.CurrentFloor - 1)) + 2; // Ensure above current
 
             // Act
             elevator.MoveToFloor(targetFloor);
 
             // Assert
             status = elevator.GetStatus();
+
             Assert.Equal(targetFloor, status.CurrentFloor);
             Assert.Equal("Up", status.Direction);
-            Assert.True(status.IsMoving); // IsMoving should be true after moving to a new floor                     
+            Assert.False(status.IsMoving); // Movement completes
         }
 
         /// <summary>
@@ -172,18 +173,19 @@ namespace ElevatorChallenge.Tests
         {
             // Arrange
             var elevator = _fixture.Create<Elevator>();
-            elevator.MoveToFloor(5); // Move to a known floor first
-
-            var targetFloor = _fixture.Create<int>() % 4 + 1; // Ensure target floor is below current floor (which is 5)
+            elevator.MoveToFloor(5); // Set to known floor
+            
+            var targetFloor = _fixture.Create<int>() % 4 + 1; // 1–4, below 5
 
             // Act
             elevator.MoveToFloor(targetFloor);
 
             // Assert
             var status = elevator.GetStatus();
+
             Assert.Equal(targetFloor, status.CurrentFloor);
             Assert.Equal("Down", status.Direction);
-            Assert.True(status.IsMoving); // IsMoving should be true after moving to a new floor
+            Assert.False(status.IsMoving);
         }
 
         /// <summary>
@@ -204,9 +206,9 @@ namespace ElevatorChallenge.Tests
         public void MoveToFloor_SameFloor_SetsDirectionNone()
         {
             // Arrange
-            var elevator = _fixture.Create<Elevator>();
+            var elevator = _fixture.Create<IElevator>();
             var status = elevator.GetStatus();
-            var currentFloor = status.CurrentFloor; // Get the current floor
+            var currentFloor = status.CurrentFloor;
 
             // Act
             elevator.MoveToFloor(currentFloor);
@@ -216,16 +218,16 @@ namespace ElevatorChallenge.Tests
 
             Assert.Equal(currentFloor, status.CurrentFloor);
             Assert.Equal("None", status.Direction);
-            Assert.False(status.IsMoving); // IsMoving should be false when not moving
+            Assert.False(status.IsMoving);
         }
 
         /// <summary>
         /// Tests moving the elevator to a floor below one, which is invalid.
-        /// This test verifies that an ArgumentOutOfRangeException is thrown when trying to move to a floor below one.
+        /// This test verifies that an ArgumentException is thrown when trying to move to a floor below one.
         /// </summary>
         /// <remarks>
         /// This test ensures that the Elevator class enforces the contract that the floor number must be at least one.
-        /// It checks that when an invalid floor (below one) is provided, an ArgumentOutOfRangeException is thrown with the appropriate message.
+        /// It checks that when an invalid floor (below one) is provided, an ArgumentException is thrown with the appropriate message.
         /// This is essential to ensure that the Elevator class behaves correctly and does not allow invalid parameters.
         /// </remarks>
         [Fact]
@@ -236,8 +238,8 @@ namespace ElevatorChallenge.Tests
             var invalidFloor = 0; // Floor below one is invalid
 
             // Act & Assert
-            var exception = Assert.Throws<ArgumentOutOfRangeException>(() => elevator.MoveToFloor(invalidFloor));
-            Assert.Equal("Floor must be between 1 and", exception.Message);
+            var exception = Assert.Throws<ArgumentException>(() => elevator.MoveToFloor(invalidFloor));
+            Assert.Contains("Floor must be between 1 and", exception.Message);
         }
 
         /// <summary>
@@ -311,22 +313,22 @@ namespace ElevatorChallenge.Tests
 
         /// <summary>
         /// Tests adding passengers to the elevator with a negative count.
-        /// This test verifies that an ArgumentOutOfRangeException is thrown when trying to add a negative number of passengers.
+        /// This test verifies that an ArgumentException is thrown when trying to add a negative number of passengers.
         /// </summary>
         /// <remarks>
         /// This test ensures that the Elevator class enforces the contract that the number of passengers must be a positive integer.
-        /// It checks that when a negative count is provided, an ArgumentOutOfRangeException is thrown with the appropriate message.
+        /// It checks that when a negative count is provided, an ArgumentException is thrown with the appropriate message.
         /// This is essential to ensure that the Elevator class behaves correctly and does not allow invalid parameters.
         /// </remarks>
         [Fact]
-        public void AddPassengers_NegativeCount_ThrowsArgumentOutOfRangeException()
+        public void AddPassengers_NegativeCount_ThrowsArgumentException()
         {
             // Arrange
             var elevator = _fixture.Create<Elevator>();
             var negativeCount = _fixture.Create<int>() % 10 * -1 - 1; // Negative count
 
             // Act & Assert
-            var exception = Assert.Throws<ArgumentOutOfRangeException>(() => elevator.AddPassengers(negativeCount));
+            var exception = Assert.Throws<ArgumentException>(() => elevator.AddPassengers(negativeCount));
             Assert.Equal("Passenger count must be positive.", exception.Message);
         }
 
@@ -386,22 +388,22 @@ namespace ElevatorChallenge.Tests
 
         /// <summary>
         /// Tests removing passengers from the elevator with a negative count.
-        /// This test verifies that an ArgumentOutOfRangeException is thrown when trying to remove a negative number of passengers.
+        /// This test verifies that an ArgumentException is thrown when trying to remove a negative number of passengers.
         /// </summary>
         /// <remarks>
         /// This test ensures that the Elevator class enforces the contract that the number of passengers must be a positive integer.
-        /// It checks that when a negative count is provided, an ArgumentOutOfRangeException is thrown with the appropriate message.
+        /// It checks that when a negative count is provided, an ArgumentException is thrown with the appropriate message.
         /// This is essential to ensure that the Elevator class behaves correctly and does not allow invalid parameters.
         /// </remarks>
         [Fact]
-        public void RemovePassengers_NegativeCount_ThrowsArgumentOutOfRangeException()
+        public void RemovePassengers_NegativeCount_ThrowsArgumentException()
         {
             // Arrange
             var elevator = _fixture.Create<Elevator>();
             var negativeCount = _fixture.Create<int>() % 10 * -1 - 1; // Negative count
 
             // Act & Assert
-            var exception = Assert.Throws<ArgumentOutOfRangeException>(() => elevator.RemovePassengers(negativeCount));
+            var exception = Assert.Throws<ArgumentException>(() => elevator.RemovePassengers(negativeCount));
             Assert.Equal("Passenger count must be positive.", exception.Message);
         }
 

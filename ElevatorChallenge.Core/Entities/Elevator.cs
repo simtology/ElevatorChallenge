@@ -10,6 +10,14 @@ namespace ElevatorChallenge.Core
     /// </summary>
     public class Elevator : IElevator
     {
+        private readonly int _id;
+        private readonly int _capacity;
+        private readonly int _maxFloors;
+        private int _currentFloor = 1; // Assuming the elevator starts at the first floor
+        private int _passengerCount;
+        private string _direction = "None";
+        private bool _isMoving;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="Elevator"/> class.
         /// This constructor sets the ID, capacity, and maximum number of floors for the elevator.
@@ -24,7 +32,19 @@ namespace ElevatorChallenge.Core
         /// </remarks>
         public Elevator(int id, int capacity, int maxFloors)
         {
-            throw new NotImplementedException();
+            if (capacity <= 0)
+            {
+                throw new ArgumentException("Capacity must be a positive integer.");
+            }
+
+            if (maxFloors <= 0)
+            {
+                throw new ArgumentException("Max floors must be a positive integer.");
+            }
+
+            _id = id;
+            _capacity = capacity;
+            _maxFloors = maxFloors;
         }
 
         /// <summary>
@@ -34,7 +54,7 @@ namespace ElevatorChallenge.Core
         /// This property represents the unique ID of the elevator.
         /// It is used to identify the elevator in the system.
         /// </remarks>
-        public int Id { get { throw new NotImplementedException(); } }
+        public int Id { get { return _id; } }
 
         /// <summary>
         /// Gets the type of the elevator.
@@ -44,7 +64,7 @@ namespace ElevatorChallenge.Core
         /// It is used to differentiate between different elevator types in the system.
         /// </remarks>
         /// <returns>The type of the elevator as a string.</returns>
-        public string ElevatorType { get { throw new NotImplementedException(); } }                
+        public string ElevatorType { get { return nameof(Elevator); } }
 
         /// <summary>
         /// Moves the elevator to a specified floor.
@@ -55,12 +75,26 @@ namespace ElevatorChallenge.Core
         /// This method is used to move the elevator to a specific floor.
         /// It takes the floor number as a parameter and updates the elevator's current position.
         /// </remarks>
-        /// <exception cref="ArgumentOutOfRangeException">Thrown when the floor number is invalid.</exception>
+        /// <exception cref="ArgumentException">Thrown when the floor number is invalid.</exception>
         /// <exception cref="InvalidOperationException">Thrown when the elevator is not operational.</exception>
         public void MoveToFloor(int floor)
         {
-            // Logic to move the elevator to the specified floor
-            throw new NotImplementedException();
+            if (floor < 1 || floor > _maxFloors)
+            {
+                throw new ArgumentException($"Floor must be between 1 and {_maxFloors}.", nameof(floor));
+            }
+
+            if (floor == _currentFloor)
+            {
+                _direction = "None";
+                _isMoving = false;
+                return;
+            }
+
+            _direction = floor > _currentFloor ? "Up" : "Down";
+            _isMoving = true; // Set IsMoving to true before moving
+            _currentFloor = floor;
+            _isMoving = false; // Set IsMoving to false after reaching the target floor
         }
 
         /// <summary>
@@ -73,12 +107,21 @@ namespace ElevatorChallenge.Core
         /// It takes the count of passengers as a parameter and updates the elevator's passenger count.
         /// </remarks>
         /// <exception cref="InvalidOperationException">Thrown when the elevator is full.</exception>
-        /// <exception cref="ArgumentOutOfRangeException">Thrown when the count is negative.</exception>
-        /// <exception cref="InvalidOperationException">Thrown when the elevator is full.</exception>
+        /// <exception cref="ArgumentException">Thrown when the count is negative.</exception>      
         public void AddPassengers(int count)
         {
+            if (count < 0)
+            {
+                throw new ArgumentException("Passenger count must be positive.");
+            }
+
+            if (_passengerCount + count > _capacity)
+            {
+                throw new InvalidOperationException("Cannot add passengers: exceeds capacity.");
+            }
+
             // Logic to add passengers to the elevator
-            throw new NotImplementedException();
+            _passengerCount += count;
         }
 
         /// <summary>
@@ -91,11 +134,21 @@ namespace ElevatorChallenge.Core
         /// It takes the count of passengers to remove as a parameter and updates the elevator's passenger count.
         /// </remarks>
         /// <exception cref="InvalidOperationException">Thrown when there are not enough passengers to remove.</exception>
-        /// <exception cref="ArgumentOutOfRangeException">Thrown when the count is negative.</exception>
+        /// <exception cref="ArgumentException">Thrown when the count is negative.</exception>
         public void RemovePassengers(int count)
         {
+            if (count < 0)
+            {
+                throw new ArgumentException("Passenger count must be positive.");
+            }
+
+            if (_passengerCount - count < 0)
+            {
+                throw new InvalidOperationException("Cannot remove passengers: not enough passengers.");
+            }
+
             // Logic to remove passengers from the elevator
-            throw new NotImplementedException();
+            _passengerCount -= count;
         }
 
         /// <summary>
@@ -110,8 +163,13 @@ namespace ElevatorChallenge.Core
         /// <exception cref="InvalidOperationException">Thrown when the elevator is not operational.</exception>       
         public ElevatorStatus GetStatus()
         {
-            // Logic to get the current status of the elevator
-            throw new NotImplementedException();
-        }               
+            return new ElevatorStatus
+            {
+                CurrentFloor = _currentFloor,
+                IsMoving = _isMoving,
+                Direction = _direction,
+                PassengerCount = _passengerCount
+            };
+        }
     }
 }
