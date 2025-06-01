@@ -10,6 +10,9 @@ namespace ElevatorChallenge.Application
     /// </summary>
     public class ElevatorController : IElevatorController
     {
+        private readonly IElevatorDispatcher _dispatcher;
+        private readonly IBuilding _building;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="ElevatorController"/> class.
         /// This constructor takes an IElevatorDispatcher and IBuilding as parameters.
@@ -23,8 +26,9 @@ namespace ElevatorChallenge.Application
         /// </remarks>
         public ElevatorController(IElevatorDispatcher dispatcher, IBuilding building)
         {
-            // Initialize the controller with the dispatcher and building
-            // This will be expanded in future tasks
+            // Initialize the controller with the dispatcher and building           
+            _dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
+            _building = building ?? throw new ArgumentNullException(nameof(building));
         }
 
         /// <summary>
@@ -39,10 +43,35 @@ namespace ElevatorChallenge.Application
         /// It takes the floor number, the count of passengers waiting, and the direction of travel as parameters.
         /// The direction parameter can be used to optimize the elevator's route based on the requested direction.
         /// </remarks>
-        public void RequestElevator(int fromFloor, int PassengerCount, string direction)
+        public void RequestElevator(int fromFloor, int passengerCount, string direction)
         {
             // Logic to request an elevator based on the floor and type
-            // This will be expanded in future tasks
+            if (fromFloor < 1 || fromFloor >= _building.GetNumberOfFloors())
+            {
+                throw new ArgumentOutOfRangeException("Invalid floor.", nameof(fromFloor));
+            }
+
+            if (passengerCount < 0)
+            {
+                throw new ArgumentOutOfRangeException("Passenger count cannot be negative.", nameof(passengerCount));
+            }
+
+            if (direction != "Up" && direction != "Down")
+            {
+                throw new ArgumentException("Direction must be 'Up' or 'Down'.", nameof(direction));
+            }
+
+            var request = new FloorRequest
+            {
+                Floor = fromFloor,
+                PassengerCount = passengerCount,
+                Direction = direction
+            };
+
+            var elevator = _dispatcher.DispatchElevator(request);
+            
+            elevator.MoveToFloor(fromFloor);
+            elevator.AddPassengers(passengerCount);           
         }
 
         /// <summary>
@@ -55,16 +84,15 @@ namespace ElevatorChallenge.Application
         /// It returns an ElevatorStatus object containing information about the elevator's current floor, movement state, and direction.
         /// </remarks>
         public ElevatorStatus GetElevatorStatus(int elevatorId)
-        {
-            // Logic to get the status of a specific elevator
-            // This will be expanded in future tasks
-            return new ElevatorStatus
+        {                
+            var elevator = _building.GetElevators().FirstOrDefault(e => e.Id == elevatorId);
+
+            if (elevator == null)
             {
-                CurrentFloor = 0, // Placeholder value
-                IsMoving = false, // Placeholder value
-                Direction = "Up", // Placeholder value
-                PassengerCount = 0 // Placeholder value
-            };
+                throw new ArgumentException($"Elevator ID {elevatorId} not found.", nameof(elevatorId));
+            }
+
+            return elevator.GetStatus();
         }
     }
 }
