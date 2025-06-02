@@ -31,8 +31,9 @@ namespace ElevatorChallenge.Infrastructure
             // Register two elevator instances (Passenger and Freight)
             services.AddSingleton<IElevator>(sp =>
                 sp.GetRequiredService<IElevatorFactory>().CreateElevator(nameof(Elevator), 1, 10, 10)); // Passenger elevator
+                
             services.AddSingleton<IElevator>(sp =>
-                sp.GetRequiredService<IElevatorFactory>().CreateElevator(nameof(Elevator), 2, 100, 10)); // Freight elevator
+                sp.GetRequiredService<IElevatorFactory>().CreateElevator(nameof(FreightElevator), 2, 100, 10)); // Freight elevator
 
             // Build service provider
             var serviceProvider = services.BuildServiceProvider();
