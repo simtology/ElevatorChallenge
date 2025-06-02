@@ -63,6 +63,6 @@ namespace ElevatorChallenge.Core.Interfaces
         /// It returns an ElevatorStatus object containing information about the elevator's current floor, movement state, and direction.
         /// </remarks>
         /// <exception cref="InvalidOperationException">Thrown when the elevator is not operational.</exception>
-        ElevatorStatus GetStatus();  
+        ElevatorStatus GetStatus();
     }
 }
