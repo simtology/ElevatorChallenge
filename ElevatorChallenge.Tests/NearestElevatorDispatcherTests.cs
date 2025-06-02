@@ -21,6 +21,8 @@ namespace ElevatorChallenge.Tests
     {
         private readonly IFixture _fixture;
         private readonly IBuilding _building;
+        private readonly IElevator _standardElevator;
+        private readonly IElevator _freightElevator;
         private readonly NearestElevatorDispatcher _dispatcher;
 
         /// <summary>
@@ -40,6 +42,8 @@ namespace ElevatorChallenge.Tests
             _fixture = new Fixture();
             _building = Substitute.For<IBuilding>();
             _dispatcher = new NearestElevatorDispatcher(_building);
+            _standardElevator= Substitute.For<IElevator>();
+            _freightElevator = Substitute.For<IElevator>();
         }
 
         /// <summary>
@@ -63,6 +67,39 @@ namespace ElevatorChallenge.Tests
 
             // Act & Assert
             Assert.Throws<InvalidOperationException>(() => _dispatcher.DispatchElevator(request));
+        }
+
+        /// <summary>
+        /// Tests the <see cref="NearestElevatorDispatcher.DispatchElevator"/> method to ensure
+        /// it returns the nearest elevator based on the current floor and requested floor.
+        /// </summary>
+        /// <remarks>
+        /// This test verifies that the dispatcher correctly identifies the nearest elevator to the requested floor.
+        /// It uses mocked elevators with predefined current floors to simulate the scenario.
+        /// </remarks>
+        /// <exception cref="InvalidOperationException">
+        /// Thrown when no suitable elevator is found or no elevators are available.
+        /// </exception>
+        [Fact]
+        public void DispatchElevator_HeavyLoad_PrefersFreight()
+        {
+            // Arrange            
+            _standardElevator.ElevatorType.Returns(nameof(Elevator));
+            _freightElevator.ElevatorType.Returns(nameof(FreightElevator));
+
+            _standardElevator.GetStatus().Returns(new ElevatorStatus { CurrentFloor = 3 });
+            _freightElevator.GetStatus().Returns(new ElevatorStatus { CurrentFloor = 5 });
+
+            _building.GetElevators().Returns(new List<IElevator> { _standardElevator, _freightElevator });
+
+            var dispatcher = new NearestElevatorDispatcher(_building);
+            var request = new FloorRequest { Floor = 4, PassengerCount = 150 };
+
+            // Act
+            var result = dispatcher.DispatchElevator(request);
+
+            // Assert
+            Assert.Equal(_freightElevator, result);
         }
     }
 }
