@@ -82,6 +82,16 @@ namespace ElevatorChallenge.Application
                 return true;
             }
 
+            if (elevator.ElevatorType == nameof(FreightElevator) && request.Floor == 5)
+            {
+                return false;
+            }
+
+            if (elevator.ElevatorType == nameof(FreightElevator) && request.PassengerCount > 100)
+            {
+                return true;
+            }
+
             return false;
         }
     }

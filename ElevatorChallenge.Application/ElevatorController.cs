@@ -42,8 +42,7 @@ namespace ElevatorChallenge.Application
         /// This method is used to request an elevator to pick up passengers from a specific floor.
         /// It takes the floor number, the count of passengers waiting, and the direction of travel as parameters.
         /// The direction parameter can be used to optimize the elevator's route based on the requested direction.
-        /// </remarks>
-        /// <exception cref="ArgumentOutOfRangeException">Thrown when the specified floor is out of range.</exception>
+        /// </remarks>     
         /// <exception cref="ArgumentException">Thrown when the direction is not valid.</exception>
         /// <exception cref="ArgumentNullException">Thrown when the dispatcher or building is null.</exception>
         /// <exception cref="InvalidOperationException">Thrown when the elevator cannot be dispatched.</exception>

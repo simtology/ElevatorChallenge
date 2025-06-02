@@ -72,12 +72,14 @@ namespace ElevatorChallenge.Infrastructure
                         case "1":
                             {
                                 Console.Write("Enter floor (1-10): ");
+                                
                                 if (!int.TryParse(Console.ReadLine(), out var floor))
                                 {
                                     throw new ArgumentException("Invalid floor.");
                                 }
 
                                 Console.Write("Enter passenger count: ");
+
                                 if (!int.TryParse(Console.ReadLine(), out var passengers))
                                 {
                                     throw new ArgumentException("Invalid passenger count.");
@@ -85,7 +87,13 @@ namespace ElevatorChallenge.Infrastructure
 
                                 Console.Write("Enter direction (Up/Down): ");
 
-                                var direction = Console.ReadLine();
+                                var direction = Console.ReadLine() ?? "Up";
+
+                                if (string.IsNullOrWhiteSpace(direction))
+                                {
+                                    throw new ArgumentException("Direction cannot be empty.");
+                                }
+
                                 controller.RequestElevator(floor, passengers, direction);
 
                                 Console.WriteLine("Elevator dispatched.");
