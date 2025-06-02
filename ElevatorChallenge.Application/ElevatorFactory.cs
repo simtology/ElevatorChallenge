@@ -29,6 +29,7 @@ namespace ElevatorChallenge.Application
             return type switch
             {
                 nameof(Elevator) => new Elevator(id,capacity,maxFloors),
+                nameof(FreightElevator) => new FreightElevator(id,capacity,maxFloors),
                 _ => throw new ArgumentException($"Unknown elevator type: {type}", nameof(type))
             };
         }
