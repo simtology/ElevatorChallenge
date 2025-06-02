@@ -29,4 +29,4 @@ A C# console application simulating elevator movement in a multi-floor building,
     dotnet test
 
     **Run Application**
-    dotnet run
+    dotnet run --project ElevatorChallenge.Infrastructure/ElevatorChallenge.Infrastructure.csproj
