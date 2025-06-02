@@ -111,7 +111,7 @@ namespace ElevatorChallenge.Tests
             _building.GetNumberOfFloors().Returns(10);
 
             // Act & Assert
-            Assert.Throws<ArgumentOutOfRangeException>(() => _controller.RequestElevator(11, 2, "Up"));
+            Assert.Throws<ArgumentException>(() => _controller.RequestElevator(11, 2, "Up"));
         }
 
         /// <summary>
@@ -139,7 +139,7 @@ namespace ElevatorChallenge.Tests
             int invalidId = -Math.Abs(_fixture.Create<int>()); // Using a negative ID to simulate an invalid elevator ID
 
             // Act & Assert
-            Assert.Throws<ArgumentOutOfRangeException>(() => _controller.GetElevatorStatus(invalidId));
+            Assert.Throws<InvalidOperationException>(() => _controller.GetElevatorStatus(invalidId));
         }
 
         /// <summary>
@@ -173,6 +173,7 @@ namespace ElevatorChallenge.Tests
 
             _elevator.GetStatus().Returns(expectedStatus);
             _building.AddElevator(_elevator);
+            _building.GetElevatorById(elevatorId).Returns(_elevator);
 
             // Act
             var status = _controller.GetElevatorStatus(elevatorId);

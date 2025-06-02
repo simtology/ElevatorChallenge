@@ -1,20 +1,11 @@
-﻿// This file is a placeholder for the core building logic.
-// It will be expanded in future tasks to include the building's properties and methods.
-using ElevatorChallenge.Core.Interfaces;
-using System;
-using System.Collections.Generic;
+﻿using ElevatorChallenge.Core.Interfaces;
 
 namespace ElevatorChallenge.Core
 {
     /// <summary>
     /// Represents a building with multiple floors and elevators.
     /// This class implements the IBuilding interface and provides methods to manage elevators and floors.
-    /// It allows adding elevators, retrieving the list of elevators, and getting the number of floors in the building.
-    /// This is a placeholder implementation that can be extended in future tasks.
-    /// <remarks>
-    /// This class is a placeholder for the core building logic.
-    /// It will be expanded in future tasks to include the building's properties and methods.
-    /// </remarks>
+    /// It allows adding elevators, retrieving the list of elevators, and getting the number of floors in the building.    
     /// </summary>
     public class Building : IBuilding
     {
@@ -44,9 +35,15 @@ namespace ElevatorChallenge.Core
         /// </remarks>
         public Building(int numberOfFloors)
         {
+            if (numberOfFloors <= 0)
+            {
+                throw new ArgumentException("Number of floors must be positive.", nameof(numberOfFloors));
+            }
+    
             _numberOfFloors = numberOfFloors;
+            _elevators = new List<IElevator>();
         }
-        
+
         /// <summary>
         /// Adds an elevator to the building.   
         /// This method allows the addition of an elevator to the building's collection.
@@ -54,6 +51,30 @@ namespace ElevatorChallenge.Core
         public void AddElevator(IElevator elevator)
         {
             _elevators.Add(elevator);
+        }
+
+        /// <summary>
+        /// Retrieves an elevator by its unique identifier.
+        /// This method allows access to a specific elevator based on its ID.
+        /// </summary>
+        /// <param name="elevatorId">The unique identifier of the elevator.</param>
+        /// <returns>The elevator with the specified ID.</returns>
+        /// <remarks>
+        /// This method is used to retrieve an elevator from the building's collection.
+        /// It takes the elevator ID as a parameter and returns the corresponding elevator instance.
+        /// </remarks>
+        /// <exception cref="ArgumentException">Thrown when the elevator with the specified ID does not exist.</exception>        
+        /// <exception cref="InvalidOperationException">Thrown when the elevator with the specified ID does not exist.</exception>
+        public IElevator GetElevatorById(int elevatorId)
+        {
+            // Retrieves an elevator by its unique identifier.
+            // This method allows access to a specific elevator based on its ID.
+            if (elevatorId < 0)
+            {
+                throw new ArgumentException("Elevator ID cannot be negative.", nameof(elevatorId));
+            }
+
+            return _elevators.FirstOrDefault(e => e.Id == elevatorId) ?? throw new InvalidOperationException($"Elevator with ID {elevatorId} not found.");
         }
 
         /// <summary>
@@ -73,9 +94,8 @@ namespace ElevatorChallenge.Core
         /// </summary>
         /// <returns>The total number of floors in the building.</returns>
         public int GetNumberOfFloors()
-        {
-            // Returns the total number of floors in the building.
+        {           
             return _numberOfFloors;
-        }
+        }        
     }
 }

@@ -4,11 +4,7 @@ namespace ElevatorChallenge.Core.Interfaces
     /// Interface representing a building that contains elevators.
     /// This interface defines methods for managing floors and elevators within a building.
     /// It allows adding elevators, retrieving the list of elevators, and getting the number of floors in the building.
-    /// </summary>
-    /// <remarks>
-    /// This interface is a placeholder for the building logic.
-    /// It will be expanded in future tasks to include the building's properties and methods.
-    /// </remarks>
+    /// </summary>   
     public interface IBuilding
     {
         /// <summary>
@@ -35,5 +31,19 @@ namespace ElevatorChallenge.Core.Interfaces
         /// </summary>
         /// <returns>The total number of floors in the building.</returns>
         int GetNumberOfFloors();
+        /// <summary>
+        /// Retrieves an elevator by its unique identifier.
+        /// This method allows access to a specific elevator based on its ID.
+        /// </summary>
+        /// <param name="elevatorId">The unique identifier of the elevator.</param>
+        /// <returns>An instance of <see cref="IElevator"/> representing the elevator with the specified ID.</returns>
+        /// <remarks>
+        /// This method is used to retrieve an elevator from the building's collection.
+        /// It takes the elevator ID as a parameter and returns the corresponding elevator instance.
+        /// </remarks>
+        /// <exception cref="ArgumentException">Thrown when the elevator with the specified ID does not exist.</exception>
+        /// <exception cref="ArgumentNullException">Thrown when the elevatorId parameter is null.</exception>
+        /// <exception cref="InvalidOperationException">Thrown when the elevator with the specified ID is not found.</exception>       >
+        IElevator GetElevatorById(int elevatorId);
     }
 }
